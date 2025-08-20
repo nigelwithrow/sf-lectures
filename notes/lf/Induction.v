@@ -285,14 +285,6 @@ Proof.
 Qed.
 
 
-(*
-let mul m n = match m with
-| 0, 0 -> 0
-| 0, S _ -> 0
-| S _, 0 -> 0
-| S m', n -> S (add m' (mul n m')) end
-*)
-
 (** Now prove commutativity of multiplication.  You will probably want
     to look for (or define and prove) a "helper" theorem to be used in
     the proof of this one. Hint: what is [n * (1 + k)]? *)
@@ -301,9 +293,11 @@ Theorem mul_comm : forall m n : nat,
   m * n = n * m.
 Proof.
   intros m n.
-  destruct m as [|m'].
-  - simpl. reflexivity.
-  -
+  induction n as [|n'].
+  - rewrite mul_0_is_0. reflexivity.
+  - rewrite mul_sum_1_n'. simpl. rewrite IHn'. reflexivity.
+Qed.
+
 
 (** **** Exercise: 2 stars, standard, optional (plus_leb_compat_l)
 

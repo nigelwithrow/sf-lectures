@@ -186,16 +186,33 @@ Proof.
 (* These additional exercises will be used in later chapters.  We
    don't need to work them in class. *)
 
-Theorem even_S : forall n : nat,
-  even (S n) = negb (even n).
+Require Setoid.
+
+
+Theorem neg_neg : forall b : bool,
+  negb (negb b) = b.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros b. destruct b.
+  - reflexivity.
+  - reflexivity.
+Qed.
+
+Theorem even_S : forall n : nat,
+    even (S n) = negb (even n).
+Proof.
+  intros n. induction n as [|n'].
+  - reflexivity.
+  - rewrite -> IHn'. simpl. rewrite neg_neg. reflexivity.
+Qed.
+
 
 Theorem eqb_refl : forall n : nat,
   (n =? n) = true.
-Proof.   (* FILL IN HERE *) Admitted.
-(** [] *)
+Proof. intros n. induction n as [|n'].
+       - reflexivity.
+       - simpl. rewrite IHn'. reflexivity.
+Qed.
+
 
 (** **** Exercise: 3 stars, standard, especially useful (mul_comm)
 
@@ -203,9 +220,99 @@ Proof.   (* FILL IN HERE *) Admitted.
     use induction yet. *)
 
 Theorem add_shuffle3 : forall n m p : nat,
-  n + (m + p) = m + (n + p).
+    n + (m + p) = m + (n + p).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n m p.
+  assert (H1 : m + p = p + m). {rewrite add_comm. reflexivity. }
+  rewrite H1.
+  assert (H2 : n + (p + m) = (n + p) + m). {rewrite add_assoc'. reflexivity.}
+  rewrite H2.
+  rewrite add_comm.
+  reflexivity.
+Qed.
+
+
+Theorem mul_0_is_0 : forall n : nat,
+    n * 0 = 0.
+Proof.
+  intros n.
+  induction n as [|n'].
+  - reflexivity.
+  - simpl. apply IHn'.
+Qed.
+
+
+Theorem mul_1_is_n : forall n : nat,
+    n * 1 = n.
+Proof.
+  intros n.
+  induction n as [|n'].
+  - reflexivity.
+  - simpl. rewrite IHn'. reflexivity.
+Qed.
+
+
+Theorem add_succ_m_n_twice : forall m n : nat,
+    S m + S n = S (S (m + n)).
+Proof.
+  intros m n.
+  destruct m as [|m'].
+  - simpl. reflexivity.
+  - simpl. rewrite add_comm. simpl. rewrite add_comm. reflexivity.
+Qed.
+
+
+Theorem add_succ_r : forall m n : nat,
+    m + S n = S ( m + n ).
+Proof.
+  intros m n.
+  rewrite add_comm.
+  simpl.
+  rewrite add_comm.
+  reflexivity.
+Qed.
+
+
+Theorem mul_sum_1_n : forall m n : nat,
+    m * S n = m + m * n.
+Proof.
+  intros m n.
+  induction n as [|n'].
+  - simpl. rewrite mul_1_is_n.  rewrite mul_0_is_0. rewrite add_0_r.
+    reflexivity.
+  - induction m as [|m'].
+    + simpl. reflexivity.
+    + simpl. rewrite add_succ_r.
+      assert (H1 : m' + (n' + m' * S n') = (n' +  (m' + m' * S n'))).
+      {
+        rewrite add_comm.
+        assert (H1 : (m' + m' * S n') = (m' * S n' + m')).
+        { rewrite add_comm. reflexivity.}
+        rewrite H1.
+        rewrite add_assoc'.
+        reflexivity.
+      }
+      rewrite H1.
+      rewrite <- IHm'.
+      ++ simpl. reflexivity.
+      ++ simpl.
+         assert ( H2 : S m' * S n' = S n' + (m' * S n') ).
+{ simpl. reflexivity. }
+         assert ( H3 : S m' + S m' * n' = S (n' + (m' + m' * n')) ).
+{ simpl.
+  rewrite (add_comm m' (n' + m' * n')).
+  rewrite (add_comm m' (m' * n')).
+  rewrite add_assoc'. reflexivity. }
+
+(** Reached till here *)
+
+(*
+let mul m n = match m with
+| 0, 0 -> 0
+| 0, S _ -> 0
+| S _, 0 -> 0
+| S m', n -> S (add m' (mul n m')) end
+*)
 
 (** Now prove commutativity of multiplication.  You will probably want
     to look for (or define and prove) a "helper" theorem to be used in
@@ -214,8 +321,10 @@ Proof.
 Theorem mul_comm : forall m n : nat,
   m * n = n * m.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros m n.
+  destruct m as [|m'].
+  - simpl. reflexivity.
+  -
 
 (** **** Exercise: 2 stars, standard, optional (plus_leb_compat_l)
 

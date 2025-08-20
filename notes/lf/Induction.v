@@ -273,38 +273,17 @@ Proof.
 Qed.
 
 
-Theorem mul_sum_1_n : forall m n : nat,
+Theorem mul_sum_1_n' : forall m n : nat,
     m * S n = m + m * n.
 Proof.
   intros m n.
-  induction n as [|n'].
-  - simpl. rewrite mul_1_is_n.  rewrite mul_0_is_0. rewrite add_0_r.
+  induction m as [|m'].
+  - simpl. reflexivity.
+  - simpl. rewrite IHm'. rewrite (add_comm n (m' * n)).
+    rewrite (add_comm n (m' + m' * n)). rewrite (add_assoc' m' (m' * n) n).
     reflexivity.
-  - induction m as [|m'].
-    + simpl. reflexivity.
-    + simpl. rewrite add_succ_r.
-      assert (H1 : m' + (n' + m' * S n') = (n' +  (m' + m' * S n'))).
-      {
-        rewrite add_comm.
-        assert (H1 : (m' + m' * S n') = (m' * S n' + m')).
-        { rewrite add_comm. reflexivity.}
-        rewrite H1.
-        rewrite add_assoc'.
-        reflexivity.
-      }
-      rewrite H1.
-      rewrite <- IHm'.
-      ++ simpl. reflexivity.
-      ++ simpl.
-         assert ( H2 : S m' * S n' = S n' + (m' * S n') ).
-{ simpl. reflexivity. }
-         assert ( H3 : S m' + S m' * n' = S (n' + (m' + m' * n')) ).
-{ simpl.
-  rewrite (add_comm m' (n' + m' * n')).
-  rewrite (add_comm m' (m' * n')).
-  rewrite add_assoc'. reflexivity. }
+Qed.
 
-(** Reached till here *)
 
 (*
 let mul m n = match m with

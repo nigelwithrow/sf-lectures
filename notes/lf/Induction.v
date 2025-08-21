@@ -371,7 +371,12 @@ Qed.
 Theorem S_neqb_0 : forall n:nat,
   (S n) =? 0 = false.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n.
+  destruct n as [|n'].
+  - reflexivity.
+  - reflexivity.
+Qed.
+
 
 Theorem mult_1_l : forall n:nat, 1 * n = n.
 Proof.

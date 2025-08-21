@@ -338,10 +338,25 @@ Proof.
 Qed.
 
 
+(*Fixpoint eqb (n m : nat) : bool :=
+  match n with
+  | O => match m with
+         | O => true
+         | S m' => false
+         end
+  | S n' => match m with
+            | O => false
+            | S m' => eqb n' m'
+            end
+  end.*)
+
 Theorem zero_neqb_S : forall n:nat,
   0 =? (S n) = false.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n.
+  reflexivity.
+Qed.
+
 
 Theorem andb_false_r : forall b : bool,
   andb b false = false.

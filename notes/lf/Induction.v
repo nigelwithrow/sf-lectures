@@ -378,9 +378,15 @@ Proof.
 Qed.
 
 
-Theorem mult_1_l : forall n:nat, 1 * n = n.
+Theorem mult_1_l : forall n:nat,
+    1 * n = n.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n.
+  simpl.
+  rewrite add_0_r.
+  reflexivity.
+Qed.
+
 
 Theorem all3_spec : forall b c : bool,
   orb
@@ -389,15 +395,51 @@ Theorem all3_spec : forall b c : bool,
          (negb c))
   = true.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros b c.
+  destruct b.
+  - destruct c.
+    + reflexivity.
+    + reflexivity.
+  - destruct c.
+    + reflexivity.
+    + reflexivity.
+Qed.
+
+
+Set Printing Parentheses.
+
+
+(** Helper theorem *)
+Theorem add_assoc_complex1 : forall a b c d : nat,
+    (a + b) + (c + d) = (a + c) + (b + d).
+Proof.
+  intros a b c d. rewrite (add_comm (a + b) (c + d)). rewrite (add_assoc' (c + d) a b).
+  rewrite (add_comm b d). rewrite (add_assoc' (a + c) d b). rewrite <- (add_assoc' c d a).
+  rewrite (add_comm a c). rewrite <- (add_assoc' c a d). rewrite (add_comm a d).
+  reflexivity.
+Qed.
+
 
 Theorem mult_plus_distr_r : forall n m p : nat,
   (n + m) * p = (n * p) + (m * p).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n m p.
+  induction p as [|p'].
+  - rewrite mul_0_is_0. rewrite mul_0_is_0. rewrite mul_0_is_0. reflexivity.
+  - rewrite mul_sum_1_n'. rewrite mul_sum_1_n'. rewrite mul_sum_1_n'.
+    rewrite IHp'.
+    rewrite add_assoc_complex1.
+    reflexivity.
+Qed.
+
 
 Theorem mult_assoc : forall n m p : nat,
   n * (m * p) = (n * m) * p.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros n m p.
+  induction m as [|m'].
+  - simpl. rewrite mul_0_is_0. reflexivity.
+  - simpl. rewrite mul_sum_1_n'. rewrite mul_comm. rewrite mult_plus_distr_r.
+    rewrite mult_plus_distr_r. rewrite (mul_comm p n). rewrite (mul_comm (m' * p) n). rewrite IHm'.
+    reflexivity.
+Qed.

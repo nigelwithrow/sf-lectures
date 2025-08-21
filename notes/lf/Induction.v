@@ -307,12 +307,15 @@ Qed.
 
 Check leb.
 
+
 Theorem plus_leb_compat_l : forall n m p : nat,
   n <=? m = true -> (p + n) <=? (p + m) = true.
 Proof.
-  (* FILL IN HERE *) Admitted.
-
-(** [] *)
+  intros n m p.
+  induction p as [|p'].
+  - simpl. intros H. apply H.
+  - simpl. apply IHp'.
+Qed.
 
 (** **** Exercise: 3 stars, standard, optional (more_exercises)
 

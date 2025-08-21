@@ -317,6 +317,7 @@ Proof.
   - simpl. apply IHp'.
 Qed.
 
+
 (** **** Exercise: 3 stars, standard, optional (more_exercises)
 
     Take a piece of paper.  For each of the following theorems, first
@@ -330,7 +331,12 @@ Qed.
 Theorem leb_refl : forall n:nat,
   (n <=? n) = true.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n.
+  induction n as [|n'].
+  - reflexivity.
+  - simpl. apply IHn'.
+Qed.
+
 
 Theorem zero_neqb_S : forall n:nat,
   0 =? (S n) = false.

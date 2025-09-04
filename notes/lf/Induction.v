@@ -32,28 +32,11 @@ Proof. reflexivity. Qed.
 (** But the proof that it is also a neutral
     element on the _right_ ... *)
 
-Theorem add_0_r_firsttry : forall n:nat,
-  n + 0 = n.
-(** ... gets stuck. *)
-Proof.
-  intros n.
-  simpl. (* Does nothing! *)
-Abort.
-
 (** And reasoning by cases using [destruct n] doesn't get us much
     further: the branch of the case analysis where we assume [n = 0]
     goes through fine, but in the branch where [n = S n'] for some [n'] we
     get stuck in exactly the same way. *)
 
-Theorem add_0_r_secondtry : forall n:nat,
-  n + 0 = n.
-Proof.
-  intros n. destruct n as [| n'] eqn:E.
-  - (* n = 0 *)
-    reflexivity. (* so far so good... *)
-  - (* n = S n' *)
-    simpl.       (* ...but here we are stuck again *)
-Abort.
 
 (** We need a bigger hammer: the _principle of induction_ over
     natural numbers...
@@ -225,7 +208,7 @@ Proof.
   intros n m p.
   assert (H1 : m + p = p + m). {rewrite add_comm. reflexivity. }
   rewrite H1.
-  assert (H2 : n + (p + m) = (n + p) + m). {rewrite add_assoc'. reflexivity.}
+  assert (H2 : n + (p + m) = (n + p) + m). { rewrite add_assoc'. reflexivity. }
   rewrite H2.
   rewrite add_comm.
   reflexivity.
@@ -442,4 +425,32 @@ Proof.
   - simpl. rewrite mul_sum_1_n'. rewrite mul_comm. rewrite mult_plus_distr_r.
     rewrite mult_plus_distr_r. rewrite (mul_comm p n). rewrite (mul_comm (m' * p) n). rewrite IHm'.
     reflexivity.
+Qed.
+
+Theorem mult_plus_distr_l : forall n m p : nat,
+  n * (m + p) = (n * m) + (n * p).
+Proof.
+  intros n m p.
+  induction n as [|n'].
+  - reflexivity.
+  - simpl. rewrite IHn'. rewrite add_assoc_complex1. reflexivity.
+Qed.
+
+
+Theorem mult_comm : forall m n : nat,
+  m * n = n * m.
+Proof.
+  intros m n.
+  induction m as [|m'].
+  - rewrite mul_0_is_0. reflexivity.
+  - simpl. rewrite IHm'. rewrite mul_sum_1_n'. reflexivity.
+Qed.
+
+Theorem mult_plus_distr_both : forall a b c d : nat,
+  (a + b) * (c + d) = (a*c + b*c) + (a*d + b*d).
+Proof.
+  intros a b c d.
+  rewrite mult_plus_distr_r.
+  rewrite mult_plus_distr_l. rewrite mult_plus_distr_l.
+  rewrite add_assoc_complex1. reflexivity.
 Qed.
